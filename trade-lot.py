@@ -581,7 +581,7 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                 view_scores = calculate_view_scores(df, current_price, support, symbol)   # Truyền symbol vào
                 # tech_score = calculate_weighted_score(view_scores)
                 xh_score = scan_xanh_hong_score(df, regime)
-                tech_score = calculate_weighted_score_v2(view_scores, xh_score)
+                tech_score = calculate_weighted_score_v2(view_scores, xh_score['score'] if isinstance(xh_score, dict) else xh_score)
                 final_score = round(tech_score + day_factor, 2)
                 final_score += market_factor
 
