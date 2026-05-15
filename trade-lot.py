@@ -288,35 +288,73 @@ WEIGHTS = {
     'Ichimoku': 0.08
 }
 
-def calculate_weighted_score_v2(scores_dict, xh_score):
-    xh_scaled = (xh_score / 6) * 10
+def calculate_weighted_score_v2(scores_dict: dict, xh_score) -> dict:
+    """
+    Tính điểm tổng hợp có trọng số, xử lý an toàn None và NaN.
+    Trả về dict chi tiết để debug dễ dàng.
+    """
+    # ====================== XỬ LÝ DỮ LIỆU ĐẦU VÀO ======================
+    # Chuyển None / NaN thành giá trị mặc định
+    cleaned_scores = {}
+    for view, score in scores_dict.items():
+        if isinstance(score, (int, float)) and pd.notna(score):  # pd.notna để kiểm tra NaN
+            cleaned_scores[view] = float(score)
+        else:
+            cleaned_scores[view] = 5.0   # Giá trị trung lập nếu lỗi/missing
 
-    scores_dict['XH'] = xh_scaled
+    # Xử lý xh_score
+    if isinstance(xh_score, dict):
+        xh_raw = xh_score.get('score', 0)
+    else:
+        xh_raw = xh_score if isinstance(xh_score, (int, float)) else 0
 
-    weighted = sum(
-        scores_dict.get(view, 5.0) * weight
-        for view, weight in WEIGHTS.items()
-    )
+    xh_scaled = (xh_raw / 6) * 10 if xh_raw is not None else 5.0
 
-    # ===== BONUS =====
-    strong = sum(1 for v in scores_dict.values() if v >= 7.5)
+    # Thêm XH vào dict
+    cleaned_scores['XH'] = xh_scaled
 
-    if strong >= 5:
-        weighted += 1.2
-    elif strong >= 4:
-        weighted += 0.8
+    # ====================== TÍNH ĐIỂM CÓ TRỌNG SỐ ======================
+    weighted = 0.0
+    for view, weight in WEIGHTS.items():
+        score = cleaned_scores.get(view, 5.0)
+        weighted += score * weight
 
-    # ===== XH BONUS =====
-    if xh_score >= 5:
-        weighted += 0.8   # 🔥 setup cực đẹp
-
-    elif xh_score >= 4:
+    # ====================== BONUS & PENALTY ======================
+    # Bonus: Số view mạnh
+    strong_count = sum(1 for v in cleaned_scores.values() if v >= 7.5)
+    if strong_count >= 5:
+        weighted += 1.5
+    elif strong_count >= 4:
+        weighted += 0.9
+    elif strong_count >= 3:
         weighted += 0.4
 
-    # ===== PENALTY =====
-    weak = sum(1 for v in scores_dict.values() if v <= 4.0)
-    if weak >= 3:
-        weighted -= 0.8
+    # Bonus Xanh Hồng
+    if xh_raw >= 5.0:
+        weighted += 1.0      # Setup rất đẹp
+    elif xh_raw >= 4.0:
+        weighted += 0.5
+
+    # Penalty: Số view yếu
+    weak_count = sum(1 for v in cleaned_scores.values() if v <= 4.0)
+    if weak_count >= 3:
+        weighted -= 1.0
+    elif weak_count >= 2:
+        weighted -= 0.5
+
+    # Giới hạn điểm trong khoảng 0 - 10
+    final_score = round(max(0, min(10, weighted)), 2)
+
+    return {
+        "final_score": final_score,
+        "xh_scaled": round(xh_scaled, 2),
+        "strong_views": strong_count,
+        "weak_views": weak_count,
+        "raw_scores": cleaned_scores,
+        "status": "STRONG" if final_score >= 7.5 else 
+                   "GOOD" if final_score >= 6.0 else 
+                   "WATCH" if final_score >= 5.0 else "WEAK"
+    }
 
 
 
@@ -580,9 +618,9 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
 
                 view_scores = calculate_view_scores(df, current_price, support, symbol)   # Truyền symbol vào
                 # tech_score = calculate_weighted_score(view_scores)
-                xh_score = scan_xanh_hong_score(df, regime)
-                tech_score = calculate_weighted_score_v2(view_scores, xh_score['score'] if isinstance(xh_score, dict) else xh_score)
-                final_score = round(tech_score + day_factor, 2)
+                xh_result = scan_xanh_hong_score(df, regime)
+                tech_score = calculate_weighted_score_v2(view_scores, xh_result)
+                final_score = round(tech_score['final_score'] + day_factor, 2)
                 final_score += market_factor
 
                 if near_exp:
