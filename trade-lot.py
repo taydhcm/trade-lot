@@ -8,6 +8,106 @@ from datetime import datetime, timedelta
 import warnings
 import calendar
 
+def scan_xanh_hong_score(df: pd.DataFrame, regime: str = "SIDEWAY") -> dict:
+    """
+    Hàm chấm điểm theo logic Xanh Hồng (tối đa 6 điểm)
+    Trả về: score và chi tiết từng tiêu chí
+    """
+    try:
+        if df is None or df.empty or len(df) < 30:
+            return {"score": 0, "details": "Dữ liệu không đủ"}
+
+        close = df['close']
+        high = df['high']
+        low = df['low']
+        volume = df['volume']
+        
+        score = 0
+        details = {}
+
+        # ================== 1. TREND ==================
+        ma20 = close.rolling(20).mean().iloc[-1]
+        if close.iloc[-1] > ma20:
+            score += 1
+            details["trend"] = "✅ Trên MA20 (+1)"
+        else:
+            details["trend"] = "❌ Dưới MA20 (0)"
+
+        # ================== 2. MOMENTUM (RSI) ==================
+        rsi = ta.rsi(close, length=14).iloc[-1]
+        if 45 < rsi < 60:
+            score += 1
+            details["rsi"] = f"✅ RSI đẹp ({rsi:.1f}) (+1)"
+        else:
+            details["rsi"] = f"❌ RSI {rsi:.1f} (0)"
+
+        # ================== 3. FLOW (CMF) ==================
+        mfm = ((close - low) - (high - close)) / (high - low)
+        mfm = mfm.replace([np.inf, -np.inf], 0).fillna(0)
+        cmf = (mfm * volume).rolling(21).sum() / volume.rolling(21).sum()
+        cmf_value = cmf.iloc[-1]
+        
+        if cmf_value > -0.05:
+            score += 1
+            details["cmf"] = f"✅ CMF OK ({cmf_value:.3f}) (+1)"
+        else:
+            details["cmf"] = f"❌ CMF yếu ({cmf_value:.3f}) (0)"
+
+        # ================== 4. TÍCH LŨY (Volatility) ==================
+        range_ratio = (
+            high.rolling(20).max().iloc[-1] - 
+            low.rolling(20).min().iloc[-1]
+        ) / close.iloc[-1]
+        
+        if range_ratio < 0.18:
+            score += 1
+            details["volatility"] = f"✅ Tích lũy tốt ({range_ratio:.1%}) (+1)"
+        else:
+            details["volatility"] = f"❌ Biến động lớn ({range_ratio:.1%}) (0)"
+
+        # ================== 5. GẦN BREAKOUT ==================
+        dist_to_high = (
+            high.rolling(20).max().iloc[-1] - close.iloc[-1]
+        ) / close.iloc[-1]
+        
+        if dist_to_high < 0.05:
+            score += 1
+            details["breakout"] = f"✅ Gần breakout ({dist_to_high:.1%}) (+1)"
+        else:
+            details["breakout"] = f"❌ Còn xa vùng đỉnh ({dist_to_high:.1%}) (0)"
+
+        # ================== 6. MOMENTUM T+2 ==================
+        if len(close) >= 3 and close.iloc[-1] > close.iloc[-3]:
+            score += 1
+            details["t2_momentum"] = "✅ Momentum T+2 (+1)"
+        else:
+            details["t2_momentum"] = "❌ Không có momentum ngắn hạn (0)"
+
+        # ================== ADAPTIVE THRESHOLD ==================
+        threshold = 4
+        if regime == "BEAR":
+            threshold = 5
+        elif regime == "STRONG_BULL":
+            threshold = 3.5
+
+        passed = score >= threshold
+
+        return {
+            "score": round(score, 1),
+            "max_score": 6,
+            "passed": passed,
+            "threshold": threshold,
+            "regime": regime,
+            "details": details,
+            "rsi": round(rsi, 2),
+            "cmf": round(cmf_value, 3),
+            "range_ratio": round(range_ratio, 3)
+        }
+
+    except Exception as e:
+        print(f"Lỗi scan_xanh_hong_score: {e}")
+        return {"score": 0, "max_score": 6, "passed": False, "details": f"Lỗi: {e}"}
+
 warnings.filterwarnings('ignore')
 
 # ====================== VNSTOCK API KEY ======================
@@ -75,6 +175,8 @@ SECTOR_MAP = {
     "AAA": "Nhựa - Hóa chất",
     "BSR": "Dầu khí",
 }
+
+
 
 def get_market_data(symbols):
     data = []
@@ -447,6 +549,27 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
 
                 recommendation = get_recommendation(final_score, regime)
 
+                # results.append({
+                #     'Mã CK': symbol,
+                #     'Giá hiện tại': round(current_price, 2),
+                #     'Fib 38.2': fib_382,
+                #     'Fib 50': fib_50,
+                #     'Fib 61.8': fib_618,
+                #     'Trend': round(view_scores.get('Trend', 0), 1),
+                #     'Momentum': round(view_scores.get('Momentum', 0), 1),
+                #     'Oscillator': round(view_scores.get('Oscillator', 0), 1),
+                #     'Volume': round(view_scores.get('Volume', 0), 1),
+                #     'Volatility': round(view_scores.get('Volatility', 0), 1),
+                #     'PriceAction': round(view_scores.get('PriceAction', 0), 1),
+                #     'Ichimoku': round(view_scores.get('Ichimoku', 0), 1),
+                #     'Tech Score': tech_score,
+                #     'Final Score': final_score,
+                #     'Ngành nghề': get_sector(symbol),
+                #     'Khuyến nghị': recommendation
+                # })
+                # ===== TÍNH X-H SCORE =====
+                xh_score = scan_xanh_hong_score(df, regime)
+
                 results.append({
                     'Mã CK': symbol,
                     'Giá hiện tại': round(current_price, 2),
@@ -462,6 +585,7 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                     'Ichimoku': round(view_scores.get('Ichimoku', 0), 1),
                     'Tech Score': tech_score,
                     'Final Score': final_score,
+                    'X-H': xh_score,  # ✅ THÊM DÒNG NÀY
                     'Ngành nghề': get_sector(symbol),
                     'Khuyến nghị': recommendation
                 })
