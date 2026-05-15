@@ -617,7 +617,7 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                 support = df['low'].rolling(20).min().iloc[-1]
 
                 view_scores = calculate_view_scores(df, current_price, support, symbol)   # Truyền symbol vào
-                # tech_score = calculate_weighted_score(view_scores)
+                tech_score1 = calculate_weighted_score(view_scores)
                 xh_result = scan_xanh_hong_score(df, regime)
                 tech_score = calculate_weighted_score_v2(view_scores, xh_result)
                 final_score = round(tech_score['final_score'] + day_factor, 2)
@@ -665,7 +665,7 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                     'Volatility': round(view_scores.get('Volatility', 0), 1),
                     'PriceAction': round(view_scores.get('PriceAction', 0), 1),
                     'Ichimoku': round(view_scores.get('Ichimoku', 0), 1),
-                    # 'Tech Score': tech_score,
+                    'Tech OLD': tech_score1,
                     'Final Score': final_score,
                     'X-H': xh_result['score'] if isinstance(xh_result, dict) else xh_result,
                     'Ngành nghề': get_sector(symbol),
