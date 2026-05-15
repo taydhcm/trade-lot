@@ -665,7 +665,7 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                     'Volatility': round(view_scores.get('Volatility', 0), 1),
                     'PriceAction': round(view_scores.get('PriceAction', 0), 1),
                     'Ichimoku': round(view_scores.get('Ichimoku', 0), 1),
-                    'Tech Score': tech_score,
+                    # 'Tech Score': tech_score,
                     'Final Score': final_score,
                     'X-H': xh_result['score'] if isinstance(xh_result, dict) else xh_result,
                     'Ngành nghề': get_sector(symbol),
