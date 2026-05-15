@@ -585,7 +585,7 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                     'Ichimoku': round(view_scores.get('Ichimoku', 0), 1),
                     'Tech Score': tech_score,
                     'Final Score': final_score,
-                    'X-H': xh_score,  # ✅ THÊM DÒNG NÀY
+                    'X-H': xh_score['score'] if isinstance(xh_score, dict) else xh_score,
                     'Ngành nghề': get_sector(symbol),
                     'Khuyến nghị': recommendation
                 })
