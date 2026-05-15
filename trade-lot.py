@@ -288,7 +288,7 @@ WEIGHTS = {
     'Ichimoku': 0.08
 }
 
-def calculate_weighted_score(scores_dict, xh_score):
+def calculate_weighted_score_v2(scores_dict, xh_score):
     xh_scaled = (xh_score / 6) * 10
 
     scores_dict['XH'] = xh_scaled
@@ -581,7 +581,7 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                 view_scores = calculate_view_scores(df, current_price, support, symbol)   # Truyền symbol vào
                 # tech_score = calculate_weighted_score(view_scores)
                 xh_score = scan_xanh_hong_score(df, regime)
-                tech_score = calculate_weighted_score(view_scores, xh_score)
+                tech_score = calculate_weighted_score_v2(view_scores, xh_score)
                 final_score = round(tech_score + day_factor, 2)
                 final_score += market_factor
 
