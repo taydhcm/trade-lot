@@ -272,11 +272,53 @@ def get_sector(symbol):
     return SECTOR_MAP.get(symbol, "Khác / Chưa phân loại")
 
 # ====================== TRỌNG SỐ ======================
+# WEIGHTS = {
+#     'Momentum': 0.28, 'Trend': 0.20, 'Volume': 0.18,
+#     'Oscillator': 0.14, 'Volatility': 0.07, 'PriceAction': 0.06,
+#     'Ichimoku': 0.07
+# }
 WEIGHTS = {
-    'Momentum': 0.28, 'Trend': 0.20, 'Volume': 0.18,
-    'Oscillator': 0.14, 'Volatility': 0.07, 'PriceAction': 0.06,
-    'Ichimoku': 0.07
+    'XH': 0.18,              # ✅ NEW (rất quan trọng)
+    'Momentum': 0.20,        # giảm xuống
+    'Trend': 0.18,
+    'Volume': 0.14,
+    'Oscillator': 0.10,
+    'Volatility': 0.06,
+    'PriceAction': 0.06,
+    'Ichimoku': 0.08
 }
+
+def calculate_weighted_score(scores_dict, xh_score):
+    xh_scaled = (xh_score / 6) * 10
+
+    scores_dict['XH'] = xh_scaled
+
+    weighted = sum(
+        scores_dict.get(view, 5.0) * weight
+        for view, weight in WEIGHTS.items()
+    )
+
+    # ===== BONUS =====
+    strong = sum(1 for v in scores_dict.values() if v >= 7.5)
+
+    if strong >= 5:
+        weighted += 1.2
+    elif strong >= 4:
+        weighted += 0.8
+
+    # ===== XH BONUS =====
+    if xh_score >= 5:
+        weighted += 0.8   # 🔥 setup cực đẹp
+
+    elif xh_score >= 4:
+        weighted += 0.4
+
+    # ===== PENALTY =====
+    weak = sum(1 for v in scores_dict.values() if v <= 4.0)
+    if weak >= 3:
+        weighted -= 0.8
+
+
 
 # ====================== HÀM CHẤM ĐIỂM ======================
 def score_momentum(crsi):
@@ -537,7 +579,9 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                 support = df['low'].rolling(20).min().iloc[-1]
 
                 view_scores = calculate_view_scores(df, current_price, support, symbol)   # Truyền symbol vào
-                tech_score = calculate_weighted_score(view_scores)
+                # tech_score = calculate_weighted_score(view_scores)
+                xh_score = scan_xanh_hong_score(df, regime)
+                tech_score = calculate_weighted_score(view_scores, xh_score)
                 final_score = round(tech_score + day_factor, 2)
                 final_score += market_factor
 
@@ -568,7 +612,7 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                 #     'Khuyến nghị': recommendation
                 # })
                 # ===== TÍNH X-H SCORE =====
-                xh_score = scan_xanh_hong_score(df, regime)
+                
 
                 results.append({
                     'Mã CK': symbol,
