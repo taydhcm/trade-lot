@@ -678,7 +678,7 @@ else:
                     "DPM","PC1","GEG","VGT","TNG","MSB","OCB","VIB","BAB","TTA",
                     "BCG","HDG","SAM","AAA","PHR","SZC","VPI","CII","HHV","LCG",
                     "VCG","LSS","SBT","QNS","MIG","GIL","VSC","KSB","NTP","BMP",
-                    "CTR","ELC","HUT","SCR","HQC","DRC","PAC","DPR","FMC","IDI"
+                    "CTR","ELC","HUT","SCR","HQC","DRC","PAC","DPR","FMC","IDI","BSR"
                 ]
  
     selected_stocks = vn100_list
