@@ -137,57 +137,123 @@ st.markdown("**Kế hoạch trade 5-7 ngày | Target +4% | Stop -3% | Ngân sác
 
 # ====================== DICTIONARY NGÀNH NGHỀ (copy lại từ file cũ của bạn) ======================
 SECTOR_MAP = {
-    "ACB": "Ngân hàng", "BID": "Ngân hàng", "VCB": "Ngân hàng", "CTG": "Ngân hàng",
-    "HDB": "Ngân hàng", "MBB": "Ngân hàng", "SHB": "Ngân hàng", "STB": "Ngân hàng",
-    "TCB": "Ngân hàng", "TPB": "Ngân hàng", "VPB": "Ngân hàng", "LPB": "Ngân hàng",
-    "OCB": "Ngân hàng", "VIB": "Ngân hàng",
-    "HPG": "Thép - Vật liệu xây dựng", "HSG": "Thép", "NKG": "Thép",
-    "VHM": "Bất động sản", "VIC": "Bất động sản", "NVL": "Bất động sản",
-    "PDR": "Bất động sản", "KBC": "Bất động sản", "DIG": "Bất động sản",
-    "VRE": "Bất động sản", "DXG": "Bất động sản",
-    "FPT": "Công nghệ - Thông tin", "MWG": "Bán lẻ", "PNJ": "Bán lẻ",
-    "FRT": "Bán lẻ", "DGW": "Bán lẻ",
-    "MSN": "Thực phẩm - Đồ uống", "VNM": "Sữa - Thực phẩm", "SAB": "Đồ uống",
-    "QNS": "Đường", "SBT": "Đường", "LSS": "Đường",
-    "POW": "Điện lực", "GAS": "Khí đốt", "PLX": "Xăng dầu",
-    "VJC": "Hàng không", "TCH": "Ô tô - Linh kiện",
-    "SSI": "Chứng khoán", "VCI": "Chứng khoán",
-    "GEX": "Vật liệu xây dựng", "DGC": "Hóa chất", "DPM": "Phân bón",
-    "DCM": "Phân bón", "BFC": "Phân bón",
-    "ANV": "Thủy sản", "VHC": "Thủy sản",
-    "REE": "Điện lạnh - Cơ điện", "GEG": "Điện", "PC1": "Xây dựng",
-    "KDH": "Bất động sản", "NLG": "Bất động sản", "TTA": "Bất động sản",
-    "HDG": "Bất động sản", "BCG": "Bất động sản",
-    "SAM": "Dệt may", "TNG": "Dệt may", "VGT": "Dệt may",
-    "PET": "Nhựa - Hóa chất", "CSV": "Nhựa", "LAS": "Nhựa",
-    "PVS": "Dầu khí", "PVD": "Dầu khí", "PVT": "Vận tải biển",
-    "HAH": "Vận tải", "VOS": "Vận tải",
-    "SCS": "Logistics", "VSC": "Vận tải",
-    "EIB": "Ngân hàng",
-    "HHV": "Xây dựng - Hạ tầng",
-    "CII": "Xây dựng - Hạ tầng",
-    "MIG": "Bảo hiểm",
-    "VCG": "Xây dựng - Hạ tầng",
-    "GVR": "Cao su",
-    "SKG": "Bất động sản",
-    "VIX": "Chứng khoán",
-    "GIL": "Dệt may",
-    "BAB": "Ngân hàng",
-    "DBC": "Nông nghiệp - Thực phẩm",
-    "SZC": "Bất động sản - Khu công nghiệp",
-    "MSB": "Ngân hàng",
-    "VPI": "Bất động sản",
-    "BVH": "Bảo hiểm",
-    "IDC": "Xây dựng - Hạ tầng",
-    "VND": "Chứng khoán",
-    "CTS": "Chứng khoán",
-    "BSI": "Chứng khoán",
-    "FTS": "Chứng khoán",
-    "PHR": "Cao su",
-    "LCG": "Xây dựng - Hạ tầng",
-    "AAA": "Nhựa - Hóa chất",
-    "BSR": "Dầu khí",
+
+# ===== NGÂN HÀNG =====
+"ACB":"Ngân hàng","BID":"Ngân hàng","VCB":"Ngân hàng","CTG":"Ngân hàng",
+"HDB":"Ngân hàng","MBB":"Ngân hàng","SHB":"Ngân hàng","STB":"Ngân hàng",
+"TCB":"Ngân hàng","TPB":"Ngân hàng","VPB":"Ngân hàng","LPB":"Ngân hàng",
+"OCB":"Ngân hàng","VIB":"Ngân hàng","EIB":"Ngân hàng","BAB":"Ngân hàng","MSB":"Ngân hàng",
+
+# ===== CHỨNG KHOÁN =====
+"SSI":"Chứng khoán","VND":"Chứng khoán","VCI":"Chứng khoán","CTS":"Chứng khoán",
+"BSI":"Chứng khoán","FTS":"Chứng khoán","VIX":"Chứng khoán",
+
+# ===== BẤT ĐỘNG SẢN =====
+"VHM":"Bất động sản","VIC":"Bất động sản","DIG":"Bất động sản",
+"PDR":"Bất động sản","KBC":"Bất động sản","DXG":"Bất động sản",
+"VRE":"Bất động sản","NLG":"Bất động sản","KDH":"Bất động sản",
+"BCG":"Bất động sản","HDG":"Bất động sản","TTA":"Bất động sản",
+"SCR":"Bất động sản","HQC":"Bất động sản",
+
+# ===== THÉP =====
+"HPG":"Thép","HSG":"Thép","NKG":"Thép",
+
+# ===== DẦU KHÍ =====
+"GAS":"Dầu khí","PVD":"Dầu khí","PVS":"Dầu khí","BSR":"Dầu khí",
+
+# ===== ĐIỆN =====
+"POW":"Điện","GEG":"Điện","PC1":"Điện",
+
+# ===== BÁN LẺ =====
+"MWG":"Bán lẻ","FRT":"Bán lẻ","PNJ":"Bán lẻ",
+
+# ===== THỰC PHẨM =====
+"MSN":"Thực phẩm","VNM":"Thực phẩm","QNS":"Thực phẩm","DBC":"Thực phẩm","SAB":"Đồ uống",
+
+# ===== PHÂN BÓN =====
+"DPM":"Phân bón","DCM":"Phân bón",
+
+# ===== VẬT LIỆU =====
+"VCS":"VLXD","BMP":"Nhựa","NTP":"Nhựa","KSB":"Đá xây dựng",
+
+# ===== XÂY DỰNG =====
+"CTR":"Xây dựng","CII":"Hạ tầng","HHV":"Hạ tầng","LCG":"Xây dựng","VCG":"Xây dựng",
+
+# ===== LOGISTICS =====
+"SCS":"Logistics","VSC":"Logistics","VOS":"Vận tải","PVT":"Vận tải","HAH":"Vận tải",
+
+# ===== THỦY SẢN =====
+"VHC":"Thủy sản","ANV":"Thủy sản","FMC":"Thủy sản","IDI":"Thủy sản",
+
+# ===== CAO SU =====
+"GVR":"Cao su","PHR":"Cao su","DPR":"Cao su",
+
+# ===== DỆT MAY =====
+"TNG":"Dệt may","VGT":"Dệt may","GIL":"Dệt may",
+
+# ===== KHÁC =====
+"FPT":"Công nghệ","TCH":"Ô tô","PLX":"Xăng dầu","BVH":"Bảo hiểm",
+"REE":"Cơ điện","IDC":"KCN","SZC":"KCN","VPI":"Bất động sản",
+"AAA":"Nhựa","SAM":"Công nghiệp","GEX":"Công nghiệp",
+"SBT":"Đường","LSS":"Đường",
+"DRC":"Lốp xe","PAC":"Pin",
+"VJC":"Hàng không","ELC":"Viễn thông","HUT":"Hạ tầng"
 }
+def calculate_sector_scores(symbol_dfs):
+    """
+    symbol_dfs = dict {symbol: df}
+    return: dict {sector: score 1-10}
+    """
+
+    sector_data = {}
+
+    for symbol, df in symbol_dfs.items():
+        try:
+            sector = get_sector(symbol)
+
+            if df is None or len(df) < 20:
+                continue
+
+            close = df['close']
+
+            # ===== RETURN 10 NGÀY =====
+            ret = (close.iloc[-1] / close.iloc[-10]) - 1
+
+            # ===== RSI =====
+            rsi = ta.rsi(close, length=14).iloc[-1]
+
+            score = 0
+
+            # --- RETURN ---
+            if ret > 0.05:
+                score += 5
+            elif ret > 0.02:
+                score += 3
+            elif ret > 0:
+                score += 1
+
+            # --- RSI ---
+            if rsi > 60:
+                score += 5
+            elif rsi > 50:
+                score += 3
+            elif rsi > 45:
+                score += 1
+
+            sector_data.setdefault(sector, []).append(score)
+
+        except:
+            continue
+
+    # ===== AVERAGE =====
+    sector_scores = {}
+    for sector, scores in sector_data.items():
+        avg = np.mean(scores)
+
+        # scale 1–10
+        sector_scores[sector] = round(min(max(avg, 1), 10), 2)
+
+    return sector_scores
 
 
 
@@ -602,18 +668,28 @@ elif selection_mode == "Chọn 30 cổ phiếu VN30":
     vn30_list = ["ACB", "BID", "BVH", "CTG", "FPT", "GAS", "GVR", "HDB", "HPG", "MBB", "MSN", "MWG", "NVL", "PNJ", "POW", "SAB", "SSI", "STB", "TCB", "TPB", "VCB", "VHM", "VIC", "VJC", "VNM", "VPB", "VRE", "VIX", "SHB", "LPB"]
     selected_stocks = vn30_list
 else:
-    vn100_list = ["HPG","FPT","TCB","SSI","STB","VND","MWG","MBB","VHM","VIC","VPB","DIG","NVL","GEX","VCI","MSN","VNM","ACB","CTG","SHB","HDB","VIX","KBC","PDR","DXG","VCB","DGC","TPB","HSG","NKG","VRE","EIB","POW","GAS","LPB","TCH","VJC","BID","PLX","SAB","BVH","REE","PNJ","GVR","FRT","FTS","CTS","BSI","VHC","ANV","IDC","KDH","NLG","DBC","PVS","PVD","SCS","VOS","PVT","HAH","DCM","DPM","PC1","GEG","VGT","TNG","MSB","OCB","VIB","BAB","TTA","BCG","HDG","SAM","AAA","PHR","SZC","VPI","CII","HHV","LCG","VCG","LSS","SBT","QNS","MIG","GIL","VNA","SKG","VSC"]
+    # vn100_list = ["HPG","FPT","TCB","SSI","STB","VND","MWG","MBB","VHM","VIC","VPB","DIG","NVL","GEX","VCI","MSN","VNM","ACB","CTG","SHB","HDB","VIX","KBC","PDR","DXG","VCB","DGC","TPB","HSG","NKG","VRE","EIB","POW","GAS","LPB","TCH","VJC","BID","PLX","SAB","BVH","REE","PNJ","GVR","FRT","FTS","CTS","BSI","VHC","ANV","IDC","KDH","NLG","DBC","PVS","PVD","SCS","VOS","PVT","HAH","DCM","DPM","PC1","GEG","VGT","TNG","MSB","OCB","VIB","BAB","TTA","BCG","HDG","SAM","AAA","PHR","SZC","VPI","CII","HHV","LCG","VCG","LSS","SBT","QNS","MIG","GIL","VNA","SKG","VSC"]
+    vn100_list = [  "VCI","MSN","VNM","ACB","CTG","SHB","HDB","HPG","FPT","TCB",
+                    "SSI","STB","VND","MWG","MBB","VHM","VIC",
+                    "VIX","KBC","PDR","DXG","VCB","DGC","TPB","HSG","NKG","VRE",
+                    "EIB","POW","GAS","LPB","TCH","VJC","BID","PLX","SAB","BVH",
+                    "REE","PNJ","GVR","FRT","FTS","CTS","BSI","VHC","ANV","IDC",
+                    "KDH","NLG","DBC","PVS","PVD","SCS","VOS","PVT","HAH","DCM",
+                    "DPM","PC1","GEG","VGT","TNG","MSB","OCB","VIB","BAB","TTA",
+                    "BCG","HDG","SAM","AAA","PHR","SZC","VPI","CII","HHV","LCG",
+                    "VCG","LSS","SBT","QNS","MIG","GIL","VSC","KSB","NTP","BMP",
+                    "CTR","ELC","HUT","SCR","HQC","DRC","PAC","DPR","FMC","IDI"
+                ]
+ 
     selected_stocks = vn100_list
 
 if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
     with st.spinner("Đang phân tích..."):
         results = []
-        day_factor, near_exp, days_to_exp, exp_text = get_market_context()
+        symbol_dfs = {}
         
-        market_data = get_market_data(selected_stocks)
-
-        regime, market_factor = detect_market_regime(market_data)
         
+        # ===== STEP 1: LOAD DATA =====
         for symbol in selected_stocks:
             try:
                 df = Vnstock().stock(symbol=symbol).quote.history(
@@ -622,9 +698,36 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                     interval="1D"
                 )
                 time.sleep(1.5)
-
                 if df is None or df.empty or len(df) < 40:
                     continue
+
+                symbol_dfs[symbol] = df
+
+            except:
+                continue
+
+
+                
+        sector_scores = calculate_sector_scores(symbol_dfs)
+
+        
+        day_factor, near_exp, days_to_exp, exp_text = get_market_context()
+        
+        market_data = get_market_data(selected_stocks)
+
+        regime, market_factor = detect_market_regime(market_data)
+        
+        for symbol, df in symbol_dfs.items():
+            try:
+                # df = Vnstock().stock(symbol=symbol).quote.history(
+                #     start=(datetime.now() - timedelta(days=130)).strftime("%Y-%m-%d"),
+                #     end=datetime.now().strftime("%Y-%m-%d"),
+                #     interval="1D"
+                # )
+                # time.sleep(1.5)
+
+                # if df is None or df.empty or len(df) < 40:
+                #     continue
 
                 current_price = df['close'].iloc[-1]
                 support = df['low'].rolling(20).min().iloc[-1]
@@ -639,27 +742,12 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
 
                 recommendation = get_recommendation(final_score, regime)
 
-                # results.append({
-                #     'Mã CK': symbol,
-                #     'Giá hiện tại': round(current_price, 2),
-                #     'Fib 38.2': fib_382,
-                #     'Fib 50': fib_50,
-                #     'Fib 61.8': fib_618,
-                #     'Trend': round(view_scores.get('Trend', 0), 1),
-                #     'Momentum': round(view_scores.get('Momentum', 0), 1),
-                #     'Oscillator': round(view_scores.get('Oscillator', 0), 1),
-                #     'Volume': round(view_scores.get('Volume', 0), 1),
-                #     'Volatility': round(view_scores.get('Volatility', 0), 1),
-                #     'PriceAction': round(view_scores.get('PriceAction', 0), 1),
-                #     'Ichimoku': round(view_scores.get('Ichimoku', 0), 1),
-                #     'Tech Score': tech_score,
-                #     'Final Score': final_score,
-                #     'Ngành nghề': get_sector(symbol),
-                #     'Khuyến nghị': recommendation
-                # })
-                # ===== TÍNH X-H SCORE =====
                 
+                
+                sector = get_sector(symbol)
+                sector_score = sector_scores.get(sector, 5.0)
 
+                
                 results.append({
                     'Mã CK': symbol,
                     'Giá hiện tại': round(current_price, 2),
@@ -678,6 +766,7 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                     'Final Score': final_score,
                     
                     'Ngành nghề': get_sector(symbol),
+                    'Điểm ngành': sector_score,
                     'Khuyến nghị': recommendation
                 })
             except Exception as e:
