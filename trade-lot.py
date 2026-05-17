@@ -243,20 +243,20 @@ def detect_market_regime(stock_data):
 
     # ===== FAKE BULL DETECTION =====
     if change > 0.01 and breadth < 0.45:
-        return "FAKE_BULL", -1.5
+        return "FAKE_BULL -1.5", -1.5
 
     # ===== MAIN REGIME =====
     if breadth > 0.6 and rsi > 55:
-        return "STRONG_BULL", +1.0
+        return "STRONG_BULL +1.0", +1.0
 
     elif breadth > 0.5:
-        return "BULL", +0.5
+        return "BULL +0.5", +0.5
 
     elif breadth < 0.4 and rsi < 45:
-        return "BEAR", -1.5
+        return "BEAR -1.5", -1.5
 
     else:
-        return "SIDEWAY", 0.0
+        return "SIDEWAY 0.0", 0.0
 
 def smooth_regime(regime_history):
     if len(regime_history) < 3:
@@ -279,9 +279,9 @@ def get_sector(symbol):
 # }
 WEIGHTS = {
     'XH': 0.18,              # ✅ NEW (rất quan trọng)
-    'Momentum': 0.20,        # giảm xuống
+    'Momentum': 0.18,        # giảm xuống
     'Trend': 0.18,
-    'Volume': 0.14,
+    'Volume': 0.16,
     'Oscillator': 0.10,
     'Volatility': 0.06,
     'PriceAction': 0.06,
@@ -323,24 +323,24 @@ def calculate_weighted_score_v2(scores_dict: dict, xh_score) -> dict:
     # Bonus: Số view mạnh
     strong_count = sum(1 for v in cleaned_scores.values() if v >= 7.5)
     if strong_count >= 5:
-        weighted += 1.5
-    elif strong_count >= 4:
         weighted += 0.9
+    elif strong_count >= 4:
+        weighted += 0.6
     elif strong_count >= 3:
-        weighted += 0.4
+        weighted += 0.3
 
     # Bonus Xanh Hồng
-    if xh_raw >= 5.0:
-        weighted += 1.0      # Setup rất đẹp
-    elif xh_raw >= 4.0:
-        weighted += 0.5
+    # if xh_raw >= 5.0:
+    #     weighted += 0.5      
+    # elif xh_raw >= 4.0:
+    #     weighted += 0.2
 
     # Penalty: Số view yếu
     weak_count = sum(1 for v in cleaned_scores.values() if v <= 4.0)
     if weak_count >= 3:
-        weighted -= 1.0
+        weighted -= 0.9
     elif weak_count >= 2:
-        weighted -= 0.5
+        weighted -= 0.6
 
     # Giới hạn điểm trong khoảng 0 - 10
     final_score = round(max(0, min(10, weighted)), 2)
@@ -620,12 +620,7 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                 tech_score1 = calculate_weighted_score(view_scores)
                 xh_result = scan_xanh_hong_score(df, regime)
                 tech_score = calculate_weighted_score_v2(view_scores, xh_result)
-                final_score = round(tech_score['final_score'] + day_factor, 2)
-                final_score += market_factor
-
-                if near_exp:
-                    final_score += 1.0 if days_to_exp >= 0 else 0.5
-                final_score = round(min(max(final_score, 3.0), 10.5), 2)
+                final_score = round(tech_score['final_score'] + market_factor, 2)              
 
                 fib_382, fib_50, fib_618 = calculate_fibonacci(df)
 
@@ -655,19 +650,20 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
                 results.append({
                     'Mã CK': symbol,
                     'Giá hiện tại': round(current_price, 2),
-                    'Fib 38.2': fib_382,
-                    'Fib 50': fib_50,
-                    'Fib 61.8': fib_618,
+                    # 'Fib 38.2': fib_382,
+                    # 'Fib 50': fib_50,
+                    # 'Fib 61.8': fib_618,
                     'Trend': round(view_scores.get('Trend', 0), 1),
                     'Momentum': round(view_scores.get('Momentum', 0), 1),
-                    'Oscillator': round(view_scores.get('Oscillator', 0), 1),
+                    # 'Oscillator': round(view_scores.get('Oscillator', 0), 1),
                     'Volume': round(view_scores.get('Volume', 0), 1),
-                    'Volatility': round(view_scores.get('Volatility', 0), 1),
-                    'PriceAction': round(view_scores.get('PriceAction', 0), 1),
+                    # 'Volatility': round(view_scores.get('Volatility', 0), 1),
+                    # 'PriceAction': round(view_scores.get('PriceAction', 0), 1),
                     'Ichimoku': round(view_scores.get('Ichimoku', 0), 1),
+                    'X-H': xh_result['score'] if isinstance(xh_result, dict) else xh_result,
                     'Tech OLD': tech_score1,
                     'Final Score': final_score,
-                    'X-H': xh_result['score'] if isinstance(xh_result, dict) else xh_result,
+                    
                     'Ngành nghề': get_sector(symbol),
                     'Khuyến nghị': recommendation
                 })
