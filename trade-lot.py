@@ -92,16 +92,16 @@ def scan_xanh_hong_score(df: pd.DataFrame, regime: str = "SIDEWAY") -> dict:
 
         passed = score >= threshold
 
-        #TỐI ƯU T+2
-        momentum = close.iloc[-1] / close.iloc[-3]
-        if momentum > 1.01:
-            score += 1
+        # #TỐI ƯU T+2
+        # momentum = close.iloc[-1] / close.iloc[-3]
+        # if momentum > 1.01:
+        #     score += 1
 
-        #giữ xu hướng
-        higher_low = low.iloc[-1] > low.iloc[-3]
+        # #giữ xu hướng
+        # higher_low = low.iloc[-1] > low.iloc[-3]
 
-        if higher_low:
-            score += 1
+        # if higher_low:
+        #     score += 1
 
 
 
@@ -387,7 +387,7 @@ def calculate_weighted_score_v2(scores_dict: dict, xh_score) -> dict:
     else:
         xh_raw = xh_score if isinstance(xh_score, (int, float)) else 0
 
-    xh_scaled = (xh_raw / 8) * 10 if xh_raw is not None else 5.0
+    xh_scaled = (xh_raw / 6) * 10 if xh_raw is not None else 5.0
 
     # Thêm XH vào dict
     cleaned_scores['XH'] = xh_scaled
