@@ -92,6 +92,19 @@ def scan_xanh_hong_score(df: pd.DataFrame, regime: str = "SIDEWAY") -> dict:
 
         passed = score >= threshold
 
+        #TỐI ƯU T+2
+        momentum = close.iloc[-1] / close.iloc[-3]
+        if momentum > 1.01:
+            score += 1
+
+        #giữ xu hướng
+        higher_low = low.iloc[-1] > low.iloc[-3]
+
+        if higher_low:
+            score += 1
+
+
+
         return {
             "score": round(score, 1),
             "max_score": 6,
@@ -308,7 +321,7 @@ def calculate_weighted_score_v2(scores_dict: dict, xh_score) -> dict:
     else:
         xh_raw = xh_score if isinstance(xh_score, (int, float)) else 0
 
-    xh_scaled = (xh_raw / 6) * 10 if xh_raw is not None else 5.0
+    xh_scaled = (xh_raw / 8) * 10 if xh_raw is not None else 5.0
 
     # Thêm XH vào dict
     cleaned_scores['XH'] = xh_scaled
@@ -672,7 +685,7 @@ if st.sidebar.button("🚀 Chạy phân tích Multi-View", type="primary"):
 
         if results:
             df_result = pd.DataFrame(results)
-            df_result = df_result.sort_values(by='Final Score', ascending=False).reset_index(drop=True)
+            df_result = df_result.sort_values(by='X-H', ascending=False).reset_index(drop=True)
             st.success(f"✅ Hoàn thành phân tích {len(results)} cổ phiếu!")
             st.subheader("🏆 Bảng Xếp Hạng Multi-View")
             st.subheader(f"🌍 Market Regime: {regime}")
